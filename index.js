@@ -5,43 +5,34 @@ let boardRef = new Board();
 let playerA = new Player({},'A');
 let playerB = new Player({},'B');
 //Section for testing the input
-let currentKeyStream = [];
-// var stdin = process.stdin;
-// stdin.setRawMode(false);
-// stdin.resume();
-// stdin.setEncoding('utf8');
-// stdin.on('data', function (key) {
-//     // Press the escape key to exit the app
-//     if (key === '\u001B') {
-//         console.log('Bye Bye, Thanks for playing');
-//         process.exit();
-//     }
-//     process.stdout.write(key);
-//     if(!playerA.isPlayerSet){
-//         console.log(`Player Input for ${playerA.playerTag}: `);
-//         //playerA.setupPlayerData();
-//     }
-//     else if(!playerB.isPlayerSet){
-//         console.log(`Player Input for ${playerB.playerTag}: `);
-//         //playerB.setupPlayerData();
-//     }
-//     if(playerA.isPlayerSet && playerB.isPlayerSet){
-//     draw();
-//     }
-// });
 
 function draw() {
-    boardRef.drawBoard();
+    boardRef.drawBoard(playerA.positionMap,playerB.positionMap);
 }
 
-async function run() {
+async function initPlayers(){
+  if(!playerA.isPlayerSet){
+    const result = await InputHandler.initPlayerInput(playerA.playerTag);
+    playerA.setupPlayerData(result,false);
+    playerA.isPlayerSet = true;
+    console.log('Player info: ',playerA.positionMap);
+    }
+    if(!playerB.isPlayerSet){
+      let result = await InputHandler.initPlayerInput(playerB.playerTag);
+      playerB.setupPlayerData(result,true);
+      console.log('Player info: ',playerB.positionMap);
+      playerB.isPlayerSet = true;
+    }
+}
+
+async function mainLoop() {
     try {
-      let replResult = await InputHandler.demoSampler()
-      console.log('repl result:', replResult)
-  
+      await initPlayers();
+      draw();
+
     } catch(e) {
       console.log('failed:', e)
     }
   }
   
-run()
+mainLoop()

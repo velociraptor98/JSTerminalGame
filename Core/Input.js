@@ -1,32 +1,45 @@
 import * as readline from 'node:readline';
 class InputHandler {
-    static demoSampler() {
+    static rl = readline.createInterface(process.stdin, process.stdout);
+    static demoSampler(prompt = 'Input>',type) {
         return new Promise(function (resolve, reject) {
-            let rl = readline.createInterface(process.stdin, process.stdout)
-            rl.setPrompt('ready> ')
-            rl.prompt();
-            rl.on('line', function (line) {
+            // let rl = readline.createInterface(process.stdin, process.stdout)
+            InputHandler.rl.setPrompt(prompt)
+            InputHandler.rl.prompt();
+            InputHandler.rl.on('line', function (line) {
                 if (line === "exit" || line === "quit" || line == 'q') {
-                    rl.close()
+                    InputHandler.rl.close()
                     return // bail here, so rl.prompt() isn't called again
                 }
-
-                if (line === "help" || line === '?') {
-                    console.log(`commands:\n  woof\n  exit|quit\n`)
-                } else if (line === "woof") {
-                    console.log('BARK!')
-                } else if (line === "hello") {
-                    console.log('Hi there')
-                } else {
-                    console.log(`unknown command: "${line}"`)
+                if(type === 1){
+                    console.log('Line: ',line);
+                    const val = line.split(',');
+                    resolve(val);
+                    return;
                 }
-                rl.prompt()
+                if(type === 2){
+                    console.log('Handle respectice input');
+                    const inputMap = line.split(":");
+                    resolve(inputMap);
+                    return;
+                }
+                InputHandler.rl.prompt()
 
             }).on('close', function () {
-                console.log('bye')
-                resolve(42) // this is the final result of the function
+                console.log('bye');
+                resolve(1);
             });
         })
+    }
+
+    static initPlayerInput(playerTag){
+        const res = InputHandler.demoSampler(`Player - ${playerTag} Input: `,1);
+        return res;
+    }
+
+    static playerInput(playerTag){
+        const res = InputHandler.demoSampler(`Player - ${playerTag} Moves: `,2);
+        return res;
     }
 }
 export default InputHandler;
