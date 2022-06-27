@@ -9,8 +9,7 @@ class Board {
     updateBoard(keys,positionMap,tag){
         for(let key of keys){
             const position = positionMap[key];
-            console.log('temp debug: ',position);
-            this.boardStruct[position.row][position.col] =  `${tag}-${key}`;
+            this.boardStruct[position.row][position.col] = `${tag}-${key}`;
         }
     }
 
@@ -18,10 +17,13 @@ class Board {
         const keysA = Object.keys(positionMapA);
         const keysB = Object.keys(positionMapB);
         this.updateBoard(keysA,positionMapA,'A');
-        this.updateBoard(keysA,positionMapB,'B');
+        this.updateBoard(keysB,positionMapB,'B');
         for(let i = 0;i<5;++i){
             console.log(`${this.boardStruct[i][0]} ${this.boardStruct[i][1]} ${this.boardStruct[i][2]} ${this.boardStruct[i][3]} ${this.boardStruct[i][4]}`);
         }
+    }
+    clearBoardAtPos(position){
+        this.boardStruct[position.row][position.col] = '-';
     }
 }
 

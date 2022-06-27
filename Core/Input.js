@@ -3,7 +3,6 @@ class InputHandler {
     static rl = readline.createInterface(process.stdin, process.stdout);
     static demoSampler(prompt = 'Input>',type) {
         return new Promise(function (resolve, reject) {
-            // let rl = readline.createInterface(process.stdin, process.stdout)
             InputHandler.rl.setPrompt(prompt)
             InputHandler.rl.prompt();
             InputHandler.rl.on('line', function (line) {
@@ -12,13 +11,11 @@ class InputHandler {
                     return // bail here, so rl.prompt() isn't called again
                 }
                 if(type === 1){
-                    console.log('Line: ',line);
                     const val = line.split(',');
                     resolve(val);
                     return;
                 }
                 if(type === 2){
-                    console.log('Handle respectice input');
                     const inputMap = line.split(":");
                     resolve(inputMap);
                     return;
