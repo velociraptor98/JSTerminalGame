@@ -40,12 +40,23 @@ async function playerMoves() {
   playerB.updatePosition(movesB,boardRef.getBoard(),playerA);
   draw();
 }
-
+function isGameOver(){
+  let check = false;
+  if(Object.keys(playerA.positionMap).length === 0){
+    console.log('Player B Wins');
+    check = true;
+  }
+  if(Object.keys(playerB.positionMap).length === 0){
+    console.log('Player A wins');
+    check = true;
+  }
+  return check;
+}
 async function mainLoop() {
   try {
     await initPlayers();
     draw();
-    while (true) {
+    while (!isGameOver()) {
       await playerMoves();
     }
   } catch (e) {
