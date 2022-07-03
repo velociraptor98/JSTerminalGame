@@ -25,13 +25,14 @@ async function initPlayers() {
 
 async function playerMoves() {
   const movesA = await InputHandler.playerInput(playerA.playerTag);
-  const movesB = await InputHandler.playerInput(playerB.playerTag);
   const prevPosA = playerA.getPreviousPosition(movesA[0]);
   boardRef.clearBoardAtPos(prevPosA);
-  playerA.updatePosition(movesA);
+  playerA.updatePosition(movesA,boardRef.getBoard());
+  draw();
+  const movesB = await InputHandler.playerInput(playerB.playerTag);
   const prevPosB = playerB.getPreviousPosition(movesB[0]);
   boardRef.clearBoardAtPos(prevPosB);
-  playerB.updatePosition(movesB);
+  playerB.updatePosition(movesB,boardRef.getBoard());
   draw();
 }
 

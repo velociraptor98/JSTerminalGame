@@ -25,6 +25,9 @@ class Board {
     clearBoardAtPos(position){
         this.boardStruct[position.row][position.col] = '-';
     }
+    getBoard(){
+        return this.boardStruct;
+    }
 }
 
 export default Board;
