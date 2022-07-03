@@ -10,10 +10,21 @@ class Player {
             throw new Error(`Tag is required`);
         }
     }
-    setupPlayerData(data, secondary = false) {
+    setupPlayerData(data = [], secondary = false) {
         const length = data.length;
         for (let i = 0; i < length; ++i) {
-            this.positionMap[`${data[i]}`] = { row: secondary? 4 : 0, col: i };
+            if (data[i] === 'h1' || data[i] === 'H1') {
+                this.positionMap[`${data[i]}`] = { row: secondary ? 4 : 0, col: i, charType: 1 };
+            }
+            else if ((data[i] === 'h2' || data[i] === 'H2')) {
+                this.positionMap[`${data[i]}`] = { row: secondary ? 4 : 0, col: i, charType: 2 };
+            }
+            else if ((data[i] === 'h3' || data[i] === 'H3')) {
+                this.positionMap[`${data[i]}`] = { row: secondary ? 4 : 0, col: i, charType: 3 };
+            }
+            else {
+                this.positionMap[`${data[i]}`] = { row: secondary ? 4 : 0, col: i };
+            }
         }
     }
 
@@ -38,11 +49,47 @@ class Player {
     handleCollisions(row,col,otherRef){
         const current = Helper.searchMapByValue(this.positionMap,{row,col});
         const other = Helper.searchMapByValue(otherRef.positionMap,{row,col});
-        console.log('Current: ',current);
-        console.log('Other: ',other);
         if(current && other){
             otherRef.removeFromMap(other);
         }
+    }
+
+    getModifierVector(pawn,changeVector){
+        let effectorRow = 0;
+        let effectorCol = 0;
+        if(this.positionMap[pawn].charType && this.positionMap[pawn].charType === 1){
+            if(changeVector[0] === 1){
+                effectorRow+=1;
+            }
+            else if(changeVector[0] === -1){
+                effectorRow-=1;
+            }
+            else if(changeVector[1] === 1){
+                effectorCol+=1;
+            }
+            else if(changeVector[1] === -1){
+                effectorCol-=1;
+            }
+        }
+        if(this.positionMap[pawn].charType && this.positionMap[pawn].charType === 3){
+            if(changeVector[0] === 1){
+                effectorRow+=1;
+                effectorCol+1;
+            }
+            else if(changeVector[0] === -1){
+                effectorRow-=1;
+                effectorCol+=1;
+            }
+            else if(changeVector[1] === 1){
+                effectorCol+=1;
+                effectorRow+=1;
+            }
+            else if(changeVector[1] === -1){
+                effectorCol-=1;
+                effectorRow+=1;
+            }
+        }
+        return [effectorRow,effectorCol];
     }
     
     updateWithVector(pawn,changeVector,currentBoard,otherRef){
@@ -57,10 +104,44 @@ class Player {
         if(internalCollCheck) {
             return;
         }
-        this.positionMap[pawn].row+= changeVector[0];
-        this.positionMap[pawn].col+= changeVector[1];
+        // let effectorRow = 0;
+        // let effectorCol = 0;
+        const [effectorRow,effectorCol] = this.getModifierVector(pawn,changeVector);
+        // if(this.positionMap[pawn].charType && this.positionMap[pawn].charType === 1){
+        //     if(changeVector[0] === 1){
+        //         effectorRow+=1;
+        //     }
+        //     else if(changeVector[0] === -1){
+        //         effectorRow-=1;
+        //     }
+        //     else if(changeVector[1] === 1){
+        //         effectorCol+=1;
+        //     }
+        //     else if(changeVector[1] === -1){
+        //         effectorCol-=1;
+        //     }
+        // }
+        // if(this.positionMap[pawn].charType && this.positionMap[pawn].charType === 3){
+        //     if(changeVector[0] === 1){
+        //         effectorRow+=1;
+        //         effectorCol+1;
+        //     }
+        //     else if(changeVector[0] === -1){
+        //         effectorRow-=1;
+        //         effectorCol+=1;
+        //     }
+        //     else if(changeVector[1] === 1){
+        //         effectorCol+=1;
+        //         effectorRow+=1;
+        //     }
+        //     else if(changeVector[1] === -1){
+        //         effectorCol-=1;
+        //         effectorRow+=1;
+        //     }
+        // }
+        this.positionMap[pawn].row+= changeVector[0] + effectorRow;
+        this.positionMap[pawn].col+= changeVector[1] + effectorCol;
         this.handleCollisions(this.positionMap[pawn].row,this.positionMap[pawn].col,otherRef);
-        console.log('position: ',this.positionMap[pawn]);
     }
     updatePosition(position,currentBoard,otherRef){
         const pawn = position[0];
@@ -71,18 +152,15 @@ class Player {
         }
         switch(direction){
             case 'l':
-                // this.checkCollision(direction)
                 this.updateWithVector(pawn,[0,-1],currentBoard,otherRef);
                 break;
             case 'r':
                 this.updateWithVector(pawn,[0,1],currentBoard,otherRef);
                 break;
             case 'u':
-                // const v1 = this.moveDirection === 1 ? [0,1] : [0,-1];
                 this.updateWithVector(pawn,[this.moveDirection === 1 ? 1 : -1,0],currentBoard,otherRef);
                 break;
             case 'd':
-                // const v2 = this.moveDirection === 1 ? [] : [];
                 this.updateWithVector(pawn,[this.moveDirection === 1 ? 1 : -1,0],currentBoard,otherRef);
                 break;
         }
