@@ -1,3 +1,4 @@
+import Helper from "../../Core/Helper.js";
 class Player {
     constructor(playerTag,moveDirection) {
         this.isPlayerSet = false;
@@ -17,8 +18,14 @@ class Player {
     }
 
     getPreviousPosition(key){
+        if(this.positionMap[key]){
         return this.positionMap[key];
+        }
+        else{
+            return null;
+        }
     }
+
     checkInternalCollision(row,col,currentBoard){
         const value = currentBoard[row][col];
         if(value.split('-')[0] === this.playerTag){
@@ -27,8 +34,18 @@ class Player {
         }
         return false;
     }
+
+    handleCollisions(row,col,otherRef){
+        const current = Helper.searchMapByValue(this.positionMap,{row,col});
+        const other = Helper.searchMapByValue(otherRef.positionMap,{row,col});
+        console.log('Current: ',current);
+        console.log('Other: ',other);
+        if(current && other){
+            otherRef.removeFromMap(other);
+        }
+    }
     
-    updateWithVector(pawn,changeVector,currentBoard){
+    updateWithVector(pawn,changeVector,currentBoard,otherRef){
         if(this.positionMap[pawn].row+changeVector[0]>5 || this.positionMap[pawn].row+changeVector[0]< 0 ){
             throw new Error('Invalid Input');
         }
@@ -42,30 +59,40 @@ class Player {
         }
         this.positionMap[pawn].row+= changeVector[0];
         this.positionMap[pawn].col+= changeVector[1];
+        this.handleCollisions(this.positionMap[pawn].row,this.positionMap[pawn].col,otherRef);
         console.log('position: ',this.positionMap[pawn]);
     }
-    updatePosition(position,currentBoard){
+    updatePosition(position,currentBoard,otherRef){
         const pawn = position[0];
         let direction = position[1];
         direction = direction.toLowerCase();
+        if(!this.positionMap[pawn]){
+            return;
+        }
         switch(direction){
             case 'l':
                 // this.checkCollision(direction)
-                this.updateWithVector(pawn,[0,-1],currentBoard);
+                this.updateWithVector(pawn,[0,-1],currentBoard,otherRef);
                 break;
             case 'r':
-                this.updateWithVector(pawn,[0,1],currentBoard);
+                this.updateWithVector(pawn,[0,1],currentBoard,otherRef);
                 break;
             case 'u':
                 // const v1 = this.moveDirection === 1 ? [0,1] : [0,-1];
-                this.updateWithVector(pawn,[this.moveDirection === 1 ? 1 : -1,0],currentBoard);
+                this.updateWithVector(pawn,[this.moveDirection === 1 ? 1 : -1,0],currentBoard,otherRef);
                 break;
             case 'd':
                 // const v2 = this.moveDirection === 1 ? [] : [];
-                this.updateWithVector(pawn,[this.moveDirection === 1 ? 1 : -1,0],currentBoard);
+                this.updateWithVector(pawn,[this.moveDirection === 1 ? 1 : -1,0],currentBoard,otherRef);
                 break;
         }
 
+    }
+
+    removeFromMap(key){
+        if(this.positionMap[key]){
+            delete this.positionMap[key];
+        }
     }
 }
 export default Player;
