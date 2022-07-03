@@ -104,41 +104,7 @@ class Player {
         if(internalCollCheck) {
             return;
         }
-        // let effectorRow = 0;
-        // let effectorCol = 0;
         const [effectorRow,effectorCol] = this.getModifierVector(pawn,changeVector);
-        // if(this.positionMap[pawn].charType && this.positionMap[pawn].charType === 1){
-        //     if(changeVector[0] === 1){
-        //         effectorRow+=1;
-        //     }
-        //     else if(changeVector[0] === -1){
-        //         effectorRow-=1;
-        //     }
-        //     else if(changeVector[1] === 1){
-        //         effectorCol+=1;
-        //     }
-        //     else if(changeVector[1] === -1){
-        //         effectorCol-=1;
-        //     }
-        // }
-        // if(this.positionMap[pawn].charType && this.positionMap[pawn].charType === 3){
-        //     if(changeVector[0] === 1){
-        //         effectorRow+=1;
-        //         effectorCol+1;
-        //     }
-        //     else if(changeVector[0] === -1){
-        //         effectorRow-=1;
-        //         effectorCol+=1;
-        //     }
-        //     else if(changeVector[1] === 1){
-        //         effectorCol+=1;
-        //         effectorRow+=1;
-        //     }
-        //     else if(changeVector[1] === -1){
-        //         effectorCol-=1;
-        //         effectorRow+=1;
-        //     }
-        // }
         this.positionMap[pawn].row+= changeVector[0] + effectorRow;
         this.positionMap[pawn].col+= changeVector[1] + effectorCol;
         this.handleCollisions(this.positionMap[pawn].row,this.positionMap[pawn].col,otherRef);
