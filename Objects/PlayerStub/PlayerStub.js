@@ -71,6 +71,20 @@ class Player {
                 effectorCol-=1;
             }
         }
+        if(this.positionMap[pawn].charType && this.positionMap[pawn].charType === 2){
+            if(changeVector[0] === 1){
+                effectorCol+1;
+            }
+            else if(changeVector[0] === -1){
+                effectorCol+=1;
+            }
+            else if(changeVector[1] === 1){
+                effectorRow+= this.moveDirection === 1 ? 1 : -1
+            }
+            else if(changeVector[1] === -1){
+                effectorRow+=this.moveDirection === 1 ? 1 : -1;
+            }
+        }
         if(this.positionMap[pawn].charType && this.positionMap[pawn].charType === 3){
             if(changeVector[0] === 1){
                 effectorRow+=1;
